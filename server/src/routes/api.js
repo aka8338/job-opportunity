@@ -1,10 +1,10 @@
 const express = require("express");
-const expert = require("./expert");
-const employer = require("./employer");
+const { expertRouter } = require("./expert.route");
+const { employerRouter } = require("./employer.route");
 
-const router = express.Router();
+const apiRouter = express.Router();
 
-router.use("/expert", expert);
-router.use("/employer", employer);
+apiRouter.use("/expert", expertRouter);
+apiRouter.use("/employer", employerRouter);
 
-module.exports = router;
+module.exports = apiRouter;
