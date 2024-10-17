@@ -2,7 +2,6 @@ const express = require("express");
 const {
   signup,
   login,
-  companyProfile,
   editProfile,
   postJob,
   getJobs,
@@ -19,17 +18,15 @@ employerRouter.post("/auth/register", signup);
 
 employerRouter.post("/auth/login", login);
 
-employerRouter.get("/profile", companyProfile);
+employerRouter.patch("/editProfile", editProfile);
 
-employerRouter.put("/profile", editProfile);
+employerRouter.post("/postJob", postJob);
 
-employerRouter.post("/job", postJob);
+employerRouter.get("/getJobs", getJobs);
 
-employerRouter.get("/jobs", getJobs);
+employerRouter.patch("/editJob/:jobId", editJob);
 
-employerRouter.put("/job/:id", editJob);
-
-employerRouter.delete("/job/:id", deleteJob);
+employerRouter.delete("/removeJob/:jobId", deleteJob);
 
 employerRouter.get("/applicants", getApplicants);
 
