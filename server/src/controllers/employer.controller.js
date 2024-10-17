@@ -1,7 +1,6 @@
 const {
   addCompany,
   loginCompany,
-  getCompanyProfile,
   updateCompany,
   addJob,
   fatchJobs,
@@ -49,29 +48,10 @@ const login = async (req, res) => {
   }
 };
 
-const companyProfile = async (req, res) => {
-  try {
-    const { companyId } = req.body;
-    await getCompanyProfile(companyId)
-      .then((result) => {
-        res
-          .status(200)
-          .json({ message: "Company profile retrieved successfully", result });
-      })
-      .catch((error) => {
-        res
-          .status(400)
-          .json({ message: "Company profile not retrieved", error });
-      });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", error });
-  }
-};
-
 const editProfile = async (req, res) => {
   try {
-    const { email, password, companyName } = req.body;
-    await updateCompany(email, password, companyName)
+    const { email, companyName, contactNumber, companyDescription } = req.body;
+    await updateCompany(email, companyName, contactNumber, companyDescription)
       .then((result) => {
         res
           .status(200)
@@ -87,8 +67,24 @@ const editProfile = async (req, res) => {
 
 const postJob = async (req, res) => {
   try {
-    const { title, description, location, salary } = req.body;
-    await addJob(title, description, location, salary)
+    const {
+      companyId,
+      jobTitle,
+      jobDescription,
+      jobLocation,
+      jobType,
+      salary,
+      requiredSkills,
+    } = req.body;
+    await addJob(
+      companyId,
+      jobTitle,
+      jobDescription,
+      jobLocation,
+      jobType,
+      salary,
+      requiredSkills
+    )
       .then((result) => {
         res.status(201).json({ message: "Job added successfully", result });
       })
@@ -119,8 +115,24 @@ const getJobs = async (req, res) => {
 
 const editJob = async (req, res) => {
   try {
-    const { jobId, title, description, location, salary } = req.body;
-    await updateJob(id, title, description, location, salary)
+    const {
+      jobTitle,
+      jobDescription,
+      jobLocation,
+      jobType,
+      salary,
+      requiredSkills,
+    } = req.body;
+    const { jobId } = req.params;
+    await updateJob(
+      jobId,
+      jobTitle,
+      jobDescription,
+      jobLocation,
+      jobType,
+      salary,
+      requiredSkills
+    )
       .then((result) => {
         res.status(200).json({ message: "Job updated successfully", result });
       })
@@ -134,7 +146,7 @@ const editJob = async (req, res) => {
 
 const deleteJob = async (req, res) => {
   try {
-    const { jobId } = req.body;
+    const { jobId } = req.params;
     await removeJob(jobId)
       .then((result) => {
         res.status(200).json({ message: "Job removed successfully", result });
@@ -167,7 +179,6 @@ const getApplicants = async (req, res) => {
 module.exports = {
   signup,
   login,
-  companyProfile,
   editProfile,
   postJob,
   getJobs,
