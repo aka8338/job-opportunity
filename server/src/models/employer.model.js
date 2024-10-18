@@ -1,18 +1,28 @@
+const bcrypt = require("bcryptjs");
 const connection = require("../config/db");
 async function addCompany(
   email,
   password,
   companyName,
   companyDescription,
-  contactNumber
+  contactNumber,
+  virficationToken
 ) {
-  const query = `INSERT INTO employer (email, password, companyName, companyDescription, contactNumber) VALUES (?, ?, ?, ?, ?)`;
+  const virficationTokenAt = new Date.now() + 15 * 60 * 1000;
+  // Number of salt rounds for bcrypt
+  const saltRounds = 10;
+
+  // Hash the password using bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  const query = `INSERT INTO employer (email, password, companyName, companyDescription, contactNumber, virficationToken, virficationTokenAt) VALUES (?, ?, ?, ?, ?, ?, ?)`;
   const values = [
     email,
-    password,
+    hashedPassword,
     companyName,
     companyDescription,
     contactNumber,
+    virficationToken,
+    virficationTokenAt,
   ];
   return new Promise((resolve, reject) => {
     connection.query(query, values, (error, result) => {
@@ -25,14 +35,25 @@ async function addCompany(
 }
 
 async function loginCompany(email, password) {
-  const query = `SELECT * FROM employer WHERE email = ? AND password = ?`;
-  const values = [email, password];
+  const query = `SELECT * FROM employer WHERE email = ?`;
+  const values = [email];
   return new Promise((resolve, reject) => {
     connection.query(query, values, (error, result) => {
       if (error) {
         reject(error);
       }
-      resolve(result);
+      if (result.length > 0) {
+        const company = result[0];
+        bcrypt.compare(password, company.password, (err, res) => {
+          if (res) {
+            resolve(company);
+          } else {
+            resolve(null);
+          }
+        });
+      } else {
+        resolve(null);
+      }
     });
   });
 }

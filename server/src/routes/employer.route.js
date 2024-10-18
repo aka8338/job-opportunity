@@ -8,6 +8,7 @@ const {
   editJob,
   deleteJob,
   getApplicants,
+  logout,
 } = require("../controllers/employer.controller");
 
 const employerRouter = express.Router();
@@ -17,6 +18,8 @@ const employerRouter = express.Router();
 employerRouter.post("/auth/register", signup);
 
 employerRouter.post("/auth/login", login);
+
+employerRouter.get("/auth/logout", logout);
 
 employerRouter.patch("/editProfile", editProfile);
 

@@ -1,25 +1,25 @@
-const connection = require("../config/db"); 
+const connection = require("../config/db");
 const bcrypt = require("bcrypt");
 
 async function addExpert(
   email,
   password,
   firstName,
-  lastName,  // fixed typo from 'lasName' to 'lastName'
+  lastName, // fixed typo from 'lasName' to 'lastName'
   phone
 ) {
   // Number of salt rounds for bcrypt
   const saltRounds = 10;
-  
+
   // Hash the password using bcrypt
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   const query = `INSERT INTO experts (email, password, firstName, lastName, phone) VALUES (?, ?, ?, ?, ?)`;
   const values = [
     email,
-    hashedPassword,  // Use the hashed password
+    hashedPassword, // Use the hashed password
     firstName,
-    lastName,  // Use the correct name
+    lastName, // Use the correct name
     phone,
   ];
 
@@ -60,7 +60,51 @@ async function loginExpert(email, password) {
   });
 }
 
+async function updateExpert(email, password, firstName, lastName) {
+  const query = `UPDATE experts SET password = ?, firstName = ?, lastName = ? WHERE email = ?`;
+  const values = [password, firstName, lastName, email];
+
+  return new Promise((resolve, reject) => {
+    connection.query(query, values, (error, result) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(result);
+    });
+  });
+}
+
+async function fatchJobs() {
+  const query = `SELECT * FROM JobPosting`;
+
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(result);
+    });
+  });
+}
+
+async function submitJob(expertId, jobId) {
+  const query = `INSERT INTO JobApplication (expertId, jobId) VALUES (?, ?)`;
+  const values = [expertId, jobId];
+
+  return new Promise((resolve, reject) => {
+    connection.query(query, values, (error, result) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(result);
+    });
+  });
+}
+
 module.exports = {
   addExpert,
-  loginExpert
+  loginExpert,
+  updateExpert,
+  fatchJobs,
+  submitJob,
 };

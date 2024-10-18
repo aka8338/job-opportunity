@@ -1,3 +1,4 @@
+const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const {
   addCompany,
   loginCompany,
@@ -13,15 +14,21 @@ const signup = async (req, res) => {
   try {
     const { email, password, companyName, companyDescription, contactNumber } =
       req.body;
+    const virficationToken = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
     await addCompany(
       email,
       password,
       companyName,
       companyDescription,
-      contactNumber
+      contactNumber,
+      virficationToken
     )
       .then((result) => {
         res.status(201).json({ message: "Company added successfully", result });
+        // Generate token and set cookie
+        generateTokenSetCookie(res, result.expertId);
       })
       .catch((error) => {
         res.status(400).json({ message: "Company not added", error });
@@ -39,13 +46,20 @@ const login = async (req, res) => {
         res
           .status(200)
           .json({ message: "Company logged in successfully", result });
+        // Generate token and set cookie
+        generateTokenSetCookie(res, result.expertId);
       })
       .catch((error) => {
-        res.status(400).json({ message: "Company not logged in", error });
+        res.status(400).json({ message: "invalid cardinals", error });
       });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
   }
+};
+
+const logout = (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({ success: true, message: "Logout successfully" });
 };
 
 const editProfile = async (req, res) => {
@@ -185,4 +199,5 @@ module.exports = {
   editJob,
   deleteJob,
   getApplicants,
+  logout,
 };
