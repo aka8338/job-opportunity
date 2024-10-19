@@ -1,5 +1,11 @@
 const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const {
+  sendWellcomeEmail,
+  sendVerificationEmail,
+  restPasswordEmail,
+  restPasswordSuccessEmail,
+} = require("../nodemailer/email");
+const {
   addCompany,
   loginCompany,
   updateCompany,
@@ -8,13 +14,17 @@ const {
   updateJob,
   removeJob,
   fatchApplicants,
+  updateApplicantStatus,
+  verifyCompany,
+  forgotPasswordCompany,
+  resetPasswordCompany,
 } = require("../models/employer.model");
 
 const signup = async (req, res) => {
   try {
     const { email, password, companyName, companyDescription, contactNumber } =
       req.body;
-    const virficationToken = Math.floor(
+    const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
     await addCompany(
@@ -23,17 +33,29 @@ const signup = async (req, res) => {
       companyName,
       companyDescription,
       contactNumber,
-      virficationToken
+      verificationToken
     )
-      .then((result) => {
-        res.status(201).json({ message: "Company added successfully", result });
+      .then(async (result) => {
         // Generate token and set cookie
         generateTokenSetCookie(res, result.expertId);
+        try {
+          await sendVerificationEmail(email, verificationToken);
+          res
+            .status(201)
+            .json({ message: "Company added successfully", result });
+        } catch (emailError) {
+          console.error("Error sending verification email:", emailError); // Log the email error
+          res
+            .status(500)
+            .json({ message: "Company added but email not sent", emailError });
+        }
       })
       .catch((error) => {
+        console.error("Error adding company:", error); // Log the error
         res.status(400).json({ message: "Company not added", error });
       });
   } catch (error) {
+    console.error("Internal server error:", error); // Log the error
     res.status(500).json({ message: "Internal server error", error });
   }
 };
@@ -43,14 +65,14 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     await loginCompany(email, password)
       .then((result) => {
+        // Generate token and set cookie
+        generateTokenSetCookie(res, result.expertId);
         res
           .status(200)
           .json({ message: "Company logged in successfully", result });
-        // Generate token and set cookie
-        generateTokenSetCookie(res, result.expertId);
       })
       .catch((error) => {
-        res.status(400).json({ message: "invalid cardinals", error });
+        res.status(400).json({ message: "Invalid credentials", error });
       });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
@@ -65,7 +87,14 @@ const logout = (req, res) => {
 const editProfile = async (req, res) => {
   try {
     const { email, companyName, contactNumber, companyDescription } = req.body;
-    await updateCompany(email, companyName, contactNumber, companyDescription)
+    const companyId = req.userId;
+    await updateCompany(
+      companyId,
+      email,
+      companyName,
+      contactNumber,
+      companyDescription
+    )
       .then((result) => {
         res
           .status(200)
@@ -112,7 +141,7 @@ const postJob = async (req, res) => {
 
 const getJobs = async (req, res) => {
   try {
-    const { companyId } = req.body;
+    const companyId = req.userId;
     await fatchJobs(companyId)
       .then((result) => {
         res
@@ -130,6 +159,7 @@ const getJobs = async (req, res) => {
 const editJob = async (req, res) => {
   try {
     const {
+      jobId,
       jobTitle,
       jobDescription,
       jobLocation,
@@ -137,7 +167,7 @@ const editJob = async (req, res) => {
       salary,
       requiredSkills,
     } = req.body;
-    const { jobId } = req.params;
+    const companyId = req.userId;
     await updateJob(
       jobId,
       jobTitle,
@@ -145,7 +175,8 @@ const editJob = async (req, res) => {
       jobLocation,
       jobType,
       salary,
-      requiredSkills
+      requiredSkills,
+      companyId
     )
       .then((result) => {
         res.status(200).json({ message: "Job updated successfully", result });
@@ -161,7 +192,8 @@ const editJob = async (req, res) => {
 const deleteJob = async (req, res) => {
   try {
     const { jobId } = req.params;
-    await removeJob(jobId)
+    const companyId = req.userId;
+    await removeJob(jobId, companyId)
       .then((result) => {
         res.status(200).json({ message: "Job removed successfully", result });
       })
@@ -176,7 +208,8 @@ const deleteJob = async (req, res) => {
 const getApplicants = async (req, res) => {
   try {
     const { jobId } = req.body;
-    await fatchApplicants(jobId)
+    const companyId = req.userId;
+    await fatchApplicants(jobId, companyId)
       .then((result) => {
         res
           .status(200)
@@ -184,6 +217,84 @@ const getApplicants = async (req, res) => {
       })
       .catch((error) => {
         res.status(400).json({ message: "Applicants not retrieved", error });
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+const examineApplicant = async (req, res) => {
+  try {
+    const { applicantId, status } = req.body;
+    const companyId = req.userId;
+    await updateApplicantStatus(applicantId, status, companyId)
+      .then((result) => {
+        res
+          .status(200)
+          .json({ message: "Applicant status updated successfully", result });
+      })
+      .catch((error) => {
+        res
+          .status(400)
+          .json({ message: "Applicant status not updated", error });
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const companyId = req.userId;
+    await verifyCompany(companyId, token)
+      .then(async (result) => {
+        await sendWellcomeEmail(user.email, result.companyName);
+        res
+          .status(200)
+          .json({ message: "Email verified successfully", result });
+      })
+      .catch((error) => {
+        res.status(400).json({ message: "Email not verified", error });
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    await forgotPasswordCompany(email)
+      .then(async (result) => {
+        await restPasswordEmail(email, result.restPasswordToken);
+        res
+          .status(200)
+          .json({ message: "Password reset link sent successfully", result });
+      })
+      .catch((error) => {
+        res
+          .status(400)
+          .json({ message: "Password reset link not sent", error });
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+    await resetPasswordCompany(token, password)
+      .then(async (result) => {
+        await restPasswordSuccessEmail(result.email);
+        res
+          .status(200)
+          .json({ message: "Password reset successfully", result });
+      })
+      .catch((error) => {
+        res.status(400).json({ message: "Password not reset", error });
       });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
@@ -200,4 +311,8 @@ module.exports = {
   deleteJob,
   getApplicants,
   logout,
+  examineApplicant,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
 };
