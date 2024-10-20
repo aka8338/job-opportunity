@@ -7,28 +7,28 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center">
           <h1 className="text-3xl font-bold text-gray-800">
-            Hahu<span className="text-teal-500">Job</span>
+            Job<span className="text-teal-500">Finder</span>
           </h1>
           <span className="text-sm text-gray-500 ml-2">Primary</span>
         </div>
 
         {/* Navigation Links */}
         <div className="flex items-center space-x-8">
-          <a href="/" className="text-teal-500 font-semibold">
+          <Link to="/" className="text-teal-500 font-semibold">
             Home
-          </a>
-          <a href="/about" className="text-gray-700 hover:text-teal-500">
+          </Link>
+          <Link to="/about" className="text-gray-700 hover:text-teal-500">
             About
-          </a>
+          </Link>
           <a href="/jobs" className="text-gray-700 hover:text-teal-500">
             Jobs
           </a>
           <a href="/post-vacancy" className="text-gray-700 hover:text-teal-500">
             Post Vacancy
           </a>
-          <a href="/contact" className="text-gray-700 hover:text-teal-500">
+          <Link to="/contact" className="text-gray-700 hover:text-teal-500">
             Contact
-          </a>
+          </Link>
           {/* Dark Mode Toggle (Icon placeholder) */}
           <button className="text-gray-500 hover:text-gray-800">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -42,10 +42,7 @@ const Navbar = () => {
           <button className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
             <Link to='/login'>Login</Link>
           </button>
-          <span className="text-gray-600">Or</span>
-          <button className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
-            <Link to ='/signUp'>Sign up</Link>
-          </button>
+         
         </div>
       </div>
     </nav>
