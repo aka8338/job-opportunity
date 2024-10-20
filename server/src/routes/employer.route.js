@@ -9,11 +9,13 @@ const {
   deleteJob,
   getApplicants,
   logout,
+  examineApplicant,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/employer.controller");
 
 const employerRouter = express.Router();
-
-// employerRouter.get("/", home);
 
 employerRouter.post("/auth/register", signup);
 
@@ -33,9 +35,13 @@ employerRouter.delete("/removeJob/:jobId", deleteJob);
 
 employerRouter.get("/applicants", getApplicants);
 
-// employerRouter.get("/applicant/:id", applicant);
+employerRouter.patch("/applicant/:id", examineApplicant);
 
-// employerRouter.put("/applicant/:id", applicant);
+employerRouter.post("/verify", verifyEmail);
+
+employerRouter.post("/forgot-password", forgotPassword);
+
+employerRouter.post("/reset-password/:token", resetPassword);
 
 module.exports = {
   employerRouter,

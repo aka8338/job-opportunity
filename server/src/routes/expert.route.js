@@ -6,8 +6,10 @@ const {
   editProfile,
   applyJob,
   logout,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/expert.controller");
-const { getJobs } = require("../controllers/employer.controller");
 
 const expertRouter = express.Router();
 
@@ -25,9 +27,11 @@ expertRouter.get("/getJobs", getJobs);
 
 expertRouter.post("/applyJob", applyJob);
 
-// employerRouter.get("/applicant/:id", applicant);
+expertRouter.post("/verify", verifyEmail);
 
-// employerRouter.put("/applicant/:id", applicant);
+expertRouter.post("/forgot-password", forgotPassword);
+
+expertRouter.post("/reset-password/:token", resetPassword);
 
 module.exports = {
   expertRouter,
