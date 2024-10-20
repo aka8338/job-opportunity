@@ -100,9 +100,10 @@ async function addJob(
   jobLocation,
   jobType,
   salary,
-  requiredSkills
+  requiredSkills,
+  jobLevel
 ) {
-  const query = `INSERT INTO JobPosting (companyId, jobTitle, jobDescription, jobLocation, jobType, salary, requiredSkills) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const query = `INSERT INTO JobPosting (companyId, jobTitle, jobDescription, jobLocation, jobType, salary, requiredSkills, jobLevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
   const values = [
     companyId,
     jobTitle,
@@ -111,6 +112,7 @@ async function addJob(
     jobType,
     salary,
     requiredSkills,
+    jobLevel,
   ];
   return new Promise((resolve, reject) => {
     connection.query(query, values, (error, result) => {

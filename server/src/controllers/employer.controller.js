@@ -118,6 +118,7 @@ const postJob = async (req, res) => {
       jobType,
       salary,
       requiredSkills,
+      jobLevel,
     } = req.body;
     await addJob(
       companyId,
@@ -126,7 +127,8 @@ const postJob = async (req, res) => {
       jobLocation,
       jobType,
       salary,
-      requiredSkills
+      requiredSkills,
+      jobLevel
     )
       .then((result) => {
         res.status(201).json({ message: "Job added successfully", result });
