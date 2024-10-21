@@ -19,28 +19,42 @@ const {
 // expert sign up by providing basic information
 const signup = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, phone } = req.body;
+    const { email, password, firstName, lastName, phoneNumber } = req.body;
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
-    const result = await addExpert(
+    await addExpert(
       email,
       password,
       firstName,
       lastName,
-      phone,
+      phoneNumber,
       verificationToken
-    );
-    // Generate token and set cookie
-    generateTokenSetCookie(res, result.expertId);
-    await sendVerificationEmail(email, verificationToken);
-    res.status(201).json({ message: "Expert added successfully", result });
+    )
+      .then(async (result) => {
+        // Generate token and set cookie
+        generateTokenSetCookie(res, result.expertId);
+        await sendVerificationEmail(email, verificationToken);
+        res.status(201).json({
+          message: "Expert added successfully",
+          data: {
+            email,
+            firstName,
+            lastName,
+            phoneNumber,
+            expertId: result.insertId,
+          },
+        });
+      })
+      .catch((error) => {
+        if (error.code === "ER_DUP_ENTRY") {
+          res.status(400).json({ message: "Expert already exists", error });
+        } else {
+          res.status(400).json({ message: "Expert not added", error });
+        }
+      });
   } catch (error) {
-    if (error.code === "ER_DUP_ENTRY") {
-      res.status(400).json({ message: "Expert already exists", error });
-    } else {
-      res.status(400).json({ message: "Expert not added", error });
-    }
+    res.status(500).json({ message: "Internal server error", error });
   }
 };
 
@@ -126,6 +140,7 @@ const verifyEmail = async (req, res) => {
           await sendWellcomeEmail(email);
           res.status(200).json({ message: "Company verified successfully" });
         } else {
+          console.log(result);
           res.status(400).json({ message: "Invalid token" });
         }
       })

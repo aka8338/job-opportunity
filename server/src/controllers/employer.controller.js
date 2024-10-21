@@ -40,9 +40,16 @@ const signup = async (req, res) => {
         generateTokenSetCookie(res, result.expertId);
         try {
           await sendVerificationEmail(email, verificationToken);
-          res
-            .status(201)
-            .json({ message: "Company added successfully", result });
+          res.status(201).json({
+            message: "Company added successfully",
+            data: {
+              email,
+              companyDescription,
+              companyName,
+              contactNumber,
+              companyId: result.insertId,
+            },
+          });
         } catch (emailError) {
           console.error("Error sending verification email:", emailError); // Log the email error
           res

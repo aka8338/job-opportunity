@@ -117,9 +117,8 @@ async function verifyExpert(expertId, token) {
       if (error) {
         reject(error);
       }
-
       if (result.length > 0) {
-        const query = `UPDATE experts SET isVerified = 1 WHERE expertId = ?`;
+        const query = `UPDATE experts SET isVerified = 1, verificationToken=null WHERE expertId = ?`;
         const values = [expertId];
 
         connection.query(query, values, (error, result) => {

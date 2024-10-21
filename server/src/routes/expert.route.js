@@ -15,11 +15,11 @@ const expertRouter = express.Router();
 
 // expertRouter.get("/", home);
 
-expertRouter.post("/auth/register", signup);
+expertRouter.post("/signup", signup);
 
-expertRouter.post("/auth/login", login);
+expertRouter.post("/login", login);
 
-expertRouter.get("/auth/logout", logout);
+expertRouter.get("/logout", logout);
 
 expertRouter.patch("/editProfile", editProfile);
 
@@ -27,7 +27,7 @@ expertRouter.get("/getJobs", getJobs);
 
 expertRouter.post("/applyJob", applyJob);
 
-expertRouter.post("/verify", verifyEmail);
+expertRouter.post("/verify-email", verifyEmail);
 
 expertRouter.post("/forgot-password", forgotPassword);
 
