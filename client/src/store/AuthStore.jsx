@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
-
-const url = "http://localhost:5000/api/auth";
-axios.defaults.withCredentials = true;
+import axios from "../api/axios";
 
 const AuthStore = create((set) => ({
   user: null,
@@ -11,37 +8,32 @@ const AuthStore = create((set) => ({
   isLoading: false,
   isChackingAuth: false,
 
-  signup: async (email, password, confirmPassword, userName) => {
+  signup: async (data, path) => {
     set({ isLoading: true, error: null });
+    const { confirmPassword, ...signupData } = data;
     try {
-      if (password !== confirmPassword) {
+      if (data.password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
-      const response = await axios.post(`${url}/signup`, {
-        userName,
-        email,
-        password,
-      });
+      const response = await axios.post(path, signupData);
       set({
-        user: response.data.user,
+        user: response.data.data,
         isAuthenticated: false,
         isLoading: false,
       });
     } catch (error) {
       set({
-        error: error.response.date.message || "Error on signing up",
+        error: error.response.data.message || "Error on signing up",
         isLoading: false,
       });
       throw new Error(error);
     }
   },
 
-  verifyEmail: async (verificationToken) => {
+  verifyEmail: async (verificationToken, path) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${url}/verify`, {
-        verificationToken,
-      });
+      const response = await axios.post(path, { token: verificationToken });
       set({
         user: response.data.user,
         isAuthenticated: true,
@@ -59,7 +51,7 @@ const AuthStore = create((set) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${url}/login`, { email, password });
+      const response = await axios.post("/expert/login", { email, password });
       set({
         user: response.data.user,
         isAuthenticated: true,
@@ -67,7 +59,7 @@ const AuthStore = create((set) => ({
       });
     } catch (error) {
       set({
-        error: error.response.data.message || "Error on logining",
+        error: error.response.data.message || "Error on logging in",
         isLoading: false,
       });
       throw new Error(error);

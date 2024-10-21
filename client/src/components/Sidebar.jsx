@@ -2,12 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   BarChart,
-  MessageCircle,
   User,
   Calendar,
   Search,
   PieChart,
-  Folder,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -20,12 +18,10 @@ const Sidebar = () => {
   // Define menus with lucide-react icons instead of image sources
   const Menus = [
     { title: "Dashboard", icon: BarChart, to: "/" },
-    { title: "Inbox", icon: MessageCircle, to: "/inbox" },
-    { title: "Accounts", icon: User, to: "/accounts" },
     { title: "Schedule", icon: Calendar, to: "/schedule" },
     { title: "Search job", icon: Search, to: "/post-job" },
     { title: "Project Analytics", icon: PieChart, to: "/project-analytics" },
-    { title: "Files", icon: Folder, gap: true, to: "/files" },
+    { title: "Accounts", icon: User, to: "/accounts", gap: true },
     { title: "Setting", icon: Settings, to: "/setting" },
   ];
 
