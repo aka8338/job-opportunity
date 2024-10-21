@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  if (req.path === "/auth/register") {
+  if (req.path === "/signup") {
     return next();
   }
   const token = req.cookies.token;

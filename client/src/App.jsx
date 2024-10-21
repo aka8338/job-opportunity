@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import AboutUs from "./pages/About.jsx";
-import ContactUs from "./pages/Contactus.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
 import EmployerSignup from "./pages/EmployerSignup.jsx";
 import { default as ExpertSignUp } from "./pages/ExpertSignup.jsx";
 import Home from "./pages/Home.jsx";
@@ -13,9 +13,11 @@ import AuthStore from "./store/AuthStore";
 
 function App() {
   const { isAuthenticated } = AuthStore();
+  const path = window.location.pathname.split("/").slice(-2).join("/");
+
   return (
     <div className="min-h-screen flex overflow-hidden gap-1">
-      <Sidebar />
+      {isAuthenticated && <Sidebar />}
       <div className="flex-1">
         <Routes>
           <Route
@@ -29,7 +31,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/about" element={<AboutUs />} />
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path={`/${path}`} element={<VerifyEmailPage />} />
         </Routes>
       </div>
     </div>

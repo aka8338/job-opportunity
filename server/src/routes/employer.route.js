@@ -17,11 +17,11 @@ const {
 
 const employerRouter = express.Router();
 
-employerRouter.post("/auth/register", signup);
+employerRouter.post("/signup", signup);
 
-employerRouter.post("/auth/login", login);
+employerRouter.post("/login", login);
 
-employerRouter.get("/auth/logout", logout);
+employerRouter.get("/logout", logout);
 
 employerRouter.patch("/editProfile", editProfile);
 

@@ -1,5 +1,12 @@
 import { motion } from "framer-motion";
-import { Building, Loader, Lock, Mail } from "lucide-react";
+import {
+  Building,
+  Building2,
+  PhoneCall,
+  Loader,
+  Lock,
+  Mail,
+} from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
@@ -12,6 +19,7 @@ function EmployerSignUp() {
     password: "",
     confirmPassword: "",
     companyDescription: "",
+    contactNumber: "",
   });
 
   const { signup, error, isLoading } = AuthStore();
@@ -25,14 +33,8 @@ function EmployerSignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signup(
-        formData.email,
-        formData.password,
-        formData.confirmPassword,
-        formData.companyName,
-        formData.companyDescription // Ensure this matches the signup function signature
-      );
-      navigate("/verify-email");
+      await signup(formData, "/employer/signup");
+      navigate("/employer/verify-email");
     } catch (error) {
       console.log(error);
     }
@@ -59,14 +61,23 @@ function EmployerSignUp() {
               value={formData.companyName}
               onChange={handleInputChange}
             />
-            <textarea
-              className="w-full p-3 mt-3 mb-6 bg-gray-900 text-gray-400 rounded-md resize-none"
+            <Input
+              icon={Building2}
+              type="textarea"
               name="companyDescription"
               placeholder="Company Description"
-              rows={3} // Use a textarea for the company description for better UX
               value={formData.companyDescription}
               onChange={handleInputChange}
             />
+            <Input
+              icon={PhoneCall}
+              type="text"
+              name="contactNumber"
+              placeholder="Contact Number"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+            />
+
             <Input
               icon={Mail}
               type="email"

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Loader, Lock, Mail, UserRoundPen } from "lucide-react";
+import { Loader, Lock, Mail, PhoneCall, UserRoundPen } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
@@ -12,6 +12,7 @@ function ExpertSignUp() {
     email: "",
     password: "",
     confirmPassword: "",
+    phoneNumber: "",
   });
 
   const { signup, error, isLoading } = AuthStore();
@@ -25,14 +26,8 @@ function ExpertSignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signup(
-        formData.email,
-        formData.password,
-        formData.confirmPassword,
-        formData.firstName,
-        formData.lastName
-      );
-      navigate("/verify-email");
+      await signup(formData, "/expert/signup");
+      navigate("/expert/verify-email");
     } catch (error) {
       console.log(error);
     }
@@ -65,6 +60,14 @@ function ExpertSignUp() {
               name="lastName"
               placeholder="Last Name"
               value={formData.lastName}
+              onChange={handleInputChange}
+            />
+            <Input
+              icon={PhoneCall}
+              type="text"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              value={formData.phoneNumber}
               onChange={handleInputChange}
             />
             <Input
