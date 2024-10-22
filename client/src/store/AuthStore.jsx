@@ -4,7 +4,7 @@ import axios from "../api/axios";
 
 const AuthStore = create((set) => ({
   user: null,
-  isAuthenticated: true,
+  isAuthenticated: false,
   error: null,
   isLoading: false,
   isChackingAuth: false,
