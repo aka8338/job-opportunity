@@ -7,6 +7,11 @@ const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
 const Expert = require("../models/expert-model");
 const { sendVerificationEmail } = require("../nodemailer/email");
+const Profile = require("../models/profile  ");
+
+
+
+
 
 const signup = async (req, res) => {
   try {
