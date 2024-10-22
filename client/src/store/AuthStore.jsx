@@ -3,7 +3,7 @@ import axios from "../api/axios";
 
 const AuthStore = create((set) => ({
   user: null,
-  isAuthenticated: false,
+  isAuthenticated: true,
   error: null,
   isLoading: false,
   isChackingAuth: false,
@@ -60,6 +60,20 @@ const AuthStore = create((set) => ({
     } catch (error) {
       set({
         error: error.response.data.message || "Error on logging in",
+        isLoading: false,
+      });
+      throw new Error(error);
+    }
+  },
+
+  postJob: async (jobData) => {
+    set({ isLoading: true, error: null });
+    try {
+      await axios.post("/employer/postJob", jobData);
+      set({ isLoading: false });
+    } catch (error) {
+      set({
+        error: error.response.data.message || "Error on posting job",
         isLoading: false,
       });
       throw new Error(error);

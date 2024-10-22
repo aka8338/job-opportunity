@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AuthStore from "../store/AuthStore";
 
 const PostJob = () => {
   const [jobTitle, setJobTitle] = useState("");
@@ -9,7 +10,9 @@ const PostJob = () => {
   const [jobType, setJobType] = useState("");
   const [jobLevel, setJobLevel] = useState("");
 
-  const handleSubmit = (e) => {
+  const { postJob } = AuthStore();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const jobData = {
       jobTitle,
@@ -20,6 +23,7 @@ const PostJob = () => {
       jobType,
       jobLevel,
     };
+    await postJob(jobData);
     console.log("Job Posted:", jobData);
     // Add your form submission logic here
   };
