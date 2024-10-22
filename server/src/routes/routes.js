@@ -1,7 +1,7 @@
 const express = require("express");
-const verifyToken = require("../middleware/auth.middleware");
-const { expertRouter } = require("./expert.route");
-const { employerRouter } = require("./employer.route");
+const verifyToken = require("../middleware/auth-middleware");
+const { expertRouter } = require("./expert-route");
+const { employerRouter } = require("./employer-route");
 
 const apiRouter = express.Router();
 

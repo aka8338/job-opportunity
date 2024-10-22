@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyToken = require("../middleware/auth-middleware");
 const {
   signup,
   login,
@@ -13,7 +14,7 @@ const {
   verifyEmail,
   forgotPassword,
   resetPassword,
-} = require("../controllers/employer.controller");
+} = require("../controllers/employer-controller");
 
 const employerRouter = express.Router();
 

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  if (req.path === "/signup") {
+  if (req.path === "/signup" || req.path === "/login") {
     return next();
   }
   const token = req.cookies.token;
@@ -12,6 +12,7 @@ const verifyToken = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
     if (!decoded) {
       return res
         .status(401)

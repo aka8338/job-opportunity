@@ -9,11 +9,9 @@ const {
   verifyEmail,
   forgotPassword,
   resetPassword,
-} = require("../controllers/expert.controller");
+} = require("../controllers/expert-controller");
 
 const expertRouter = express.Router();
-
-// expertRouter.get("/", home);
 
 expertRouter.post("/signup", signup);
 

@@ -3,8 +3,8 @@ const {
   PASSWORD_RESET_REQUEST_TEMPLATE,
   PASSWORD_RESET_SUCCESS_TEMPLATE,
   WELLCOME_EMAIL_TEMPLATE,
-} = require("./email.templete");
-const { mailClient } = require("../config/mail");
+} = require("./email-templete");
+const { mailClient } = require("../config/mail-config");
 
 const sender = "As company  <brukbesu1@gmail.com>";
 
