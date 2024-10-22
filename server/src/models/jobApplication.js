@@ -37,9 +37,14 @@ const JobApplication = sequelize.define(
       type: Sequelize.ENUM("applied", "shortlisted", "rejected"),
       defaultValue: "shortlisted",
     },
-    dateApplied: {
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW,
+    resume: {
+      type: Sequelize.STRING,
+      allowNull: true,
+      validate: {
+        isUrl: {
+          msg: "Resume must be a valid URL",
+        },
+      },
     },
   },
   {

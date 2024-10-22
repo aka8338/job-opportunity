@@ -46,7 +46,7 @@ const login = async (req, res) => {
         return res.status(400).json({ message: "Invalid credentials" });
       }
       // Generate token and set cookie
-      generateTokenSetCookie(res, expert.id);
+      generateTokenSetCookie(res, expert.expertId);
       res
         .status(200)
         .json({ message: "Expert logged in successfully", expert });
@@ -129,16 +129,20 @@ const forgotPassword = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const { verificationToken } = req.body;
-    const companyId = req.userId;
-    console.log(companyId, verificationToken);
+    const expertId = req.userId;
+
+    //
     const expert = await Expert.findOne({
       where: {
-        companyId,
+        expertId,
         verificationToken,
         verificationExpiresAt: { [Op.gt]: new Date() },
       },
     });
+    console.log(verificationToken, expertId);
+
     if (expert) {
+      //
       await Expert.update(
         {
           isVerified: true,
@@ -147,7 +151,7 @@ const verifyEmail = async (req, res) => {
         },
         { where: { companyId } }
       );
-      await sendWellcomeEmail(email, expert.firstName + expert.lastName);
+      await sendWellcomeEmail(expert.email, expert.firstName + expert.lastName);
       res.status(200).json({ message: "Email verified successfully" });
     } else {
       res.status(400).json({ message: "Email not verified" });

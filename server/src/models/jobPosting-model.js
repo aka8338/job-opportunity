@@ -41,10 +41,6 @@ const JobPosting = sequelize.define("JobPosting", {
     type: Sequelize.ENUM("entry", "intermediate", "senior"),
     allowNull: false,
   },
-  postedDate: {
-    type: Sequelize.DATE,
-    defaultValue: Sequelize.NOW,
-  },
   companyId: {
     type: Sequelize.INTEGER,
     references: {

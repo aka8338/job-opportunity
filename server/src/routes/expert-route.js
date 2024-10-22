@@ -25,7 +25,7 @@ expertRouter.get("/getJobs", getJobs);
 
 expertRouter.post("/applyJob", applyJob);
 
-expertRouter.post("/verify-email", verifyEmail);
+expertRouter.post("/verify", verifyEmail);
 
 expertRouter.post("/forgot-password", forgotPassword);
 

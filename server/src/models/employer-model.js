@@ -16,6 +16,8 @@ const Employer = sequelize.define(
     },
     contactNumber: {
       type: Sequelize.STRING(15),
+      allowNull: false,
+      unique: true,
     },
     email: {
       type: Sequelize.STRING(255),
@@ -24,9 +26,11 @@ const Employer = sequelize.define(
     },
     password: {
       type: Sequelize.STRING(255),
+      allowNull: false,
     },
     companyDescription: {
       type: Sequelize.STRING(255),
+      allowNull: false,
     },
     loginTime: {
       type: Sequelize.DATE,

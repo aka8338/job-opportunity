@@ -1,5 +1,6 @@
 const bycrypt = require("bcryptjs");
 const crypto = require("crypto");
+const { Op } = require("sequelize");
 const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const Employer = require("../models/employer-model");
 const JobPosting = require("../models/jobPosting-model");
@@ -103,8 +104,10 @@ const postJob = async (req, res) => {
       jobDescription,
       jobLocation,
       jobType,
-      salary,
-      requiredSkills,
+      jobSalary,
+      jobSkills,
+      jobExperience,
+      jobLevel,
     } = req.body;
 
     // Add a new job posting using Sequelize
@@ -114,8 +117,10 @@ const postJob = async (req, res) => {
       jobDescription,
       jobLocation,
       jobType,
-      salary,
-      requiredSkills,
+      jobSalary,
+      jobSkills,
+      jobExperience,
+      jobLevel,
     });
 
     res.status(201).json({ message: "Job added successfully", newJob });
@@ -232,13 +237,12 @@ const verifyEmail = async (req, res) => {
   try {
     const { verificationToken } = req.body;
     const companyId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
-
     // Find company by email and verification token using Sequelize
     const company = await Employer.findOne({
       where: {
         companyId,
         verificationToken,
-        verificationTokenExpires: { [Op.gt]: new Date() },
+        verificationExpiresAt: { [Op.gt]: new Date() },
       },
     });
 
@@ -251,7 +255,7 @@ const verifyEmail = async (req, res) => {
       {
         isVerified: true,
         verificationToken: null,
-        verificationTokenExpires: null,
+        verificationExpiresAt: null,
       },
       { where: { companyId } }
     );
