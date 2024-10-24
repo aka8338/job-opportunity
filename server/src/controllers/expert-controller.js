@@ -4,6 +4,11 @@ const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
 const Expert = require("../models/expert-model");
+const Employer = require("../models/employer-model");
+const Profile = require("../models/profile");
+
+Employer.hasMany(JobApplication);
+
 const {
   sendVerificationEmail,
   sendWellcomeEmail,
@@ -82,7 +87,14 @@ const editProfile = async (req, res) => {
 
 const getJobs = async (req, res) => {
   try {
-    const jobs = await JobPosting.findAll();
+    const jobs = await JobPosting.findAll({
+      include: [
+        {
+          model: Employer,
+          attributes: ["companyName"],
+        },
+      ],
+    });
     res.status(200).json({ message: "Jobs fetched successfully", jobs });
   } catch (error) {
     res.status(400).json({ message: "Jobs not fetched", error });
@@ -91,9 +103,13 @@ const getJobs = async (req, res) => {
 
 const applyJob = async (req, res) => {
   try {
-    const { jobId } = req.body;
+    const { jobId, resume } = req.body;
     const expertId = req.userId;
-    const jobApplication = await JobApplication.create({ expertId, jobId });
+    const jobApplication = await JobApplication.create({
+      expertId,
+      jobId,
+      resume,
+    });
     res
       .status(200)
       .json({ message: "Job applied successfully", jobApplication });
