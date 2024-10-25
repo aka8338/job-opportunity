@@ -1,59 +1,13 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 const ExpertHomePage = () => {
-  const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-slate-100 text-black p-4 flex justify-between items-center">
-        <div className="flex items-center">
-          {/* Circular Profile Picture */}
-          <img
-            src="https://via.placeholder.com/40" // Placeholder image, replace with user's profile image
-            alt="User Profile"
-            className="w-20 h-20 rounded-full border-2 border-blue-500 mr-2"
-          />
-          <div className="text-3xl font-bold">Expert Dashboard</div>
-        </div>
-        
-        <nav className="flex items-center">
-          <div className="hidden md:flex space-x-4">
-            <ul className="flex space-x-4">
-              <li><Link to="#" className="hover:text-green-600 text-2xl">Home</Link></li>
-              <li><Link to="#" className="hover:text-green-600 text-2xl">Application</Link></li>
-              <li><Link to="/profile" className="hover:text-green-600 text-2xl">Profile</Link></li>
-              <li><Link to="#" className="hover:text-green-600 text-2xl">Interview Schedule</Link></li>
-            </ul>
-          </div>
+      
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden text-2xl"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? '✖️' : '☰'} {/* Change icon based on state */}
-          </button>
-        </nav>
-      </header>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div className="md:hidden bg-slate-200 p-4">
-          <ul className="flex flex-col space-y-2">
-            <li><Link to="#" className="block hover:text-green-600 text-xl">Home</Link></li>
-            <li><Link to="#" className="block hover:text-green-600 text-xl">Application</Link></li>
-            <li><Link to="/profile" className="block hover:text-green-600 text-xl">Profile</Link></li>
-            <li><Link to="#" className="block hover:text-green-600 text-xl">Interview Schedule</Link></li>
-          </ul>
-        </div>
-      )}
+     
 
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center justify-center bg-gray-100 p-8">

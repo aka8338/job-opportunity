@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import NavBar from './components/NavBar.jsx';
 import Sidebar from "./components/Sidebar.jsx";
 import PostJob from "./components/postJob.jsx";
 import AboutUs from "./pages/About.jsx";
@@ -13,20 +14,20 @@ import Login from "./pages/Login.jsx";
 import ProfilePage from "./pages/Profile.jsx";
 import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
 import AuthStore from "./store/AuthStore";
-
 function App() {
   const { isAuthenticated } = AuthStore();
   // const path = window.location.pathname.split("/").slice(-2).join("/");
-
   return (
     <div className="min-h-screen flex overflow-hidden gap-1">
       {isAuthenticated && <Sidebar />}
       <div className="flex-1">
+      <NavBar />
         <Routes>
+         
           <Route
             path="/"
-            element={isAuthenticated ? <Dashboard /> : <Home />}
-          />
+            element={isAuthenticated ? <Dashboard /> : <Home />} />
+
           <Route path="/post-job" element={<PostJob />} />
 
           <Route path="/expert/signup" element={<ExpertSignUp />} />
@@ -37,11 +38,11 @@ function App() {
           <Route path={`/verify`} element={<VerifyEmailPage />} />
           <Route path="/expertHome" element={<ExpertHomePage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/employerHome" element={<EmployerDashboard/>} />
+          <Route path="/employerHome" element={<EmployerDashboard />} />
         </Routes>
       </div>
     </div>
   );
-}
+};
 
 export default App;

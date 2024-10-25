@@ -1,4 +1,3 @@
-import NavBar from '../components/NavBar';
 
 import { Link } from 'react-router-dom';
 const sectors = [
@@ -70,7 +69,7 @@ const sectors = [
 const LandingPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
-   <NavBar/>
+
       <div className="text-center py-12">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
           All Ethiopian Jobs in One Place.
