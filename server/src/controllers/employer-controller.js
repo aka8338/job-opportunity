@@ -7,11 +7,6 @@ const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
 const Expert = require("../models/expert-model");
 const { sendVerificationEmail } = require("../nodemailer/email");
-const Profile = require("../models/profile  ");
-
-
-
-
 
 const signup = async (req, res) => {
   try {
@@ -154,8 +149,10 @@ const editJob = async (req, res) => {
       jobDescription,
       jobLocation,
       jobType,
-      salary,
-      requiredSkills,
+      jobSalary,
+      jobSkills,
+      jobExperience,
+      jobLevel,
     } = req.body;
     const { jobId } = req.params;
 
@@ -166,8 +163,10 @@ const editJob = async (req, res) => {
         jobDescription,
         jobLocation,
         jobType,
-        salary,
-        requiredSkills,
+        jobSalary,
+        jobSkills,
+        jobExperience,
+        jobLevel,
       },
       { where: { jobId } }
     );

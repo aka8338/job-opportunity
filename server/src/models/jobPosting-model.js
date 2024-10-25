@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/db");
-const company = require("./employer-model");
+const Employer = require("./employer-model");
 
 const JobPosting = sequelize.define("JobPosting", {
   jobId: {
@@ -43,11 +43,16 @@ const JobPosting = sequelize.define("JobPosting", {
   },
   companyId: {
     type: Sequelize.INTEGER,
+    allowNull: false,
     references: {
-      model: company,
+      model: Employer,
       key: "companyId",
     },
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
   },
 });
+
+JobPosting.belongsTo(Employer, { foreignKey: "companyId" });
 
 module.exports = JobPosting;

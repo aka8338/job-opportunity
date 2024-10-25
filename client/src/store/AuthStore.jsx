@@ -1,13 +1,14 @@
-
 import { create } from "zustand";
 import axios from "../api/axios";
 
 const AuthStore = create((set) => ({
   user: null,
-  isAuthenticated: false,
+  isAuthenticated: true,
   error: null,
   isLoading: false,
   isChackingAuth: false,
+  isEmployer: true,
+  jobs: [],
 
   signup: async (data, path) => {
     set({ isLoading: true, error: null });
@@ -75,6 +76,20 @@ const AuthStore = create((set) => ({
     } catch (error) {
       set({
         error: error.response.data.message || "Error on posting job",
+        isLoading: false,
+      });
+      throw new Error(error);
+    }
+  },
+
+  getJobs: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get("/expert/getJobs");
+      set({ jobs: response.data.jobs, isLoading: false });
+    } catch (error) {
+      set({
+        error: error.response.data.message || "Error on getting jobs",
         isLoading: false,
       });
       throw new Error(error);

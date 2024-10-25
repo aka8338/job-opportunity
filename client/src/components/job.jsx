@@ -1,35 +1,65 @@
 import PropTypes from "prop-types";
+import AuthStore from "../store/AuthStore";
+import { Link } from "react-router-dom";
 
 const JobCard = ({ job }) => {
+  const { isEmployer } = AuthStore();
   return (
-    <div className="max-w-sm mx-auto bg-gradient-to-r from-yellow-300 via-amber-200 to-orange-200 rounded-lg shadow-2xl overflow-hidden my-6 space-y-4">
-      <div className="px-6 py-4 space-y-2">
+    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden my-6 flex justify-between flex-col">
+      <div className="bg-gradient-to-r from-yellow-400 via-amber-300 to-orange-300 p-4 flex flex-col items-stretch">
         {/* Job Title */}
-        <h2 className="text-2xl font-extrabold ">{job.title}</h2>
-        {/* Company and Location */}
-        <p className=" text-base">Company Name: {job.company}</p>
-        <p className=" text-base">Location: {job.location}</p>
-        {/* Salary */}
-        <p className="text-green-600 text-base">Salary: {job.salary}</p>
-        {/* Job Level */}
-        <p className="text-red-800 text-base">Level: {job.level}</p>
+        <h2 className="text-3xl font-bold text-gray-900">{job.jobTitle}</h2>
+        {/* Company Name */}
+        <p className="text-xl font-medium text-gray-700 mt-2 capitalize">
+          <span className=" text-lime-500 font-semibold">Company:</span>{" "}
+          {job.Employer.companyName}
+        </p>
       </div>
-
-      <div className="px-6 pt-4 pb-2">
+      <div className="p-4 space-y-4 flex flex-col items-stretch">
+        {/* Job Description */}
+        <strong className="text-lg text-gray-800">
+          <span className=" text-lime-500 font-semibold">Description:</span>{" "}
+          {job.jobDescription}
+        </strong>
         {/* Job Type */}
-        <span className="inline-block bg-white text-purple-800 text-xs px-3 py-1 rounded-lg mr-2 mb-2">
-          Job Type: {job.type}
-        </span>
+        <p className="text-lg text-gray-800 capitalize">
+          <span className=" text-lime-500 font-semibold">Type:</span>{" "}
+          {job.jobType}
+        </p>
+        {/* Job Location */}
+        <p className="text-lg text-gray-800">
+          <span className=" text-lime-500 font-semibold">Location:</span>{" "}
+          {job.jobLocation}
+        </p>
+        {/* Job Salary */}
+        <p className="text-green-600 text-lg">
+          <span className=" text-lime-500 font-semibold">Salary:</span>{" "}
+          {job.jobSalary}
+        </p>
+        {/* Job Experience */}
+        <p className="text-lg text-gray-800">
+          <span className=" text-lime-500 font-semibold">Experience:</span>{" "}
+          {job.jobExperience}
+        </p>
+        {/* Job Skills */}
+        <p className="text-lg text-gray-800">
+          <span className=" text-lime-500 font-semibold">Skills:</span>{" "}
+          {job.jobSkills}
+        </p>
+        {/* Job Level */}
+        <p className="text-red-800 text-lg capitalize">
+          <span className=" text-lime-500 font-semibold">Level:</span>{" "}
+          {job.jobLevel}
+        </p>
       </div>
-
       {/* Apply Button */}
-      <div className="px-6 py-4">
-        <a
-          href={job.applyLink}
-          className="bg-white hover:bg-gray-800 text-purple-800 hover:text-white font-bold py-2 px-4 rounded-full shadow-lg transition-colors duration-300"
+      <div className="p-4 bg-gray-300 flex justify-center">
+        <Link
+          to={"/jobDetails"}
+          className="bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors duration-300 w-full text-center block"
         >
-          Apply Now
-        </a>
+          {isEmployer ? "View" : "Apply Now"}
+        </Link>
       </div>
     </div>
   );
@@ -37,13 +67,15 @@ const JobCard = ({ job }) => {
 
 JobCard.propTypes = {
   job: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    company: PropTypes.string.isRequired,
-    location: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    salary: PropTypes.string.isRequired,
-    level: PropTypes.string.isRequired,
-    applyLink: PropTypes.string.isRequired,
+    jobTitle: PropTypes.string.isRequired,
+    Employer: PropTypes.object.isRequired,
+    jobDescription: PropTypes.string.isRequired,
+    jobType: PropTypes.string.isRequired,
+    jobLocation: PropTypes.string.isRequired,
+    jobSalary: PropTypes.string.isRequired,
+    jobExperience: PropTypes.string.isRequired,
+    jobSkills: PropTypes.string.isRequired,
+    jobLevel: PropTypes.string.isRequired,
   }).isRequired,
 };
 
