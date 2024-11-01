@@ -1,15 +1,21 @@
 import { motion } from "framer-motion";
 import { Loader, Lock, Mail } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import AuthStore from "../store/AuthStore";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("employer");
 
   const { login, isLoading, error } = AuthStore();
+  const navigate = useNavigate();
+
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -23,8 +29,8 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      console.log("login successfully");
+      await login(role, email, password);
+      navigate("/");
     } catch (error) {
       console.log(error);
     }
@@ -42,6 +48,20 @@ function Login() {
           <h1 className="text-2xl font-bold mb-6 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-center text-transparent">
             Create Account
           </h1>
+          <div className="mb-6">
+            <label htmlFor="role" className="block text-gray-400 mb-2">
+              Role
+            </label>
+            <select
+              id="role"
+              name="role"
+              className="w-full p-3 bg-gray-700 text-gray-200 rounded-md"
+              onChange={handleRoleChange}
+            >
+              <option value="employer">Employer</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
           <form onSubmit={handleSubmit}>
             <Input
               icon={Mail}
@@ -59,6 +79,7 @@ function Login() {
               value={password}
               onChange={handleInputChange}
             />
+
             {error && <p className="text-red-500 text-sm mb-6">{error}</p>}
             <div className="flex items-center mb-6">
               <Link
