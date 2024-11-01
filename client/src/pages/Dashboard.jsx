@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import JobCard from "../components/job";
+import JobCard from "../components/jobs";
 import SearchJob from "../components/Search";
 import AuthStore from "../store/AuthStore";
 
@@ -12,11 +12,11 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="bg-gray-800 p-4">
+    <div className="p-4">
       <SearchJob />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {jobs.map((job) => (
-          <JobCard key={job.jobId} job={job} />
+          <JobCard key={job.jobId} jobId={job.jobId} job={job} />
         ))}
       </div>
     </div>
