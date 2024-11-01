@@ -7,8 +7,6 @@ const Expert = require("../models/expert-model");
 const Employer = require("../models/employer-model");
 const Profile = require("../models/profile");
 
-Employer.hasMany(JobApplication);
-
 const {
   sendVerificationEmail,
   sendWellcomeEmail,
@@ -32,10 +30,17 @@ const signup = async (req, res) => {
       contactNumber,
       verificationToken,
     });
+
+    // Exclude password from the returned company object
+    const { password: _, ...expertWithoutPassword } = newExpert.toJSON();
     // Generate token and set cookie
     generateTokenSetCookie(res, newExpert.id);
     await sendVerificationEmail(email, newExpert.verificationToken);
-    res.status(201).json({ message: "Expert added successfully", newExpert });
+    res.status(201).json({
+      message: "Expert added successfully",
+      data: expertWithoutPassword,
+      isEmployer: false,
+    });
   } catch (error) {
     res.status(400).json({ message: "Expert not added", error });
   }
@@ -50,11 +55,15 @@ const login = async (req, res) => {
       if (!isMatch) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
+      // Exclude password from the returned company object
+      const { password: _, ...expertWithoutPassword } = expert.toJSON();
       // Generate token and set cookie
       generateTokenSetCookie(res, expert.expertId);
-      res
-        .status(200)
-        .json({ message: "Expert logged in successfully", expert });
+      res.status(200).json({
+        message: "Expert logged in successfully",
+        data: expertWithoutPassword,
+        isEmployer: false,
+      });
       // Generate token and set cookie
     } else {
       res.status(400).json({ message: "Invalid credentials" });
@@ -64,22 +73,35 @@ const login = async (req, res) => {
   }
 };
 
-const logout = (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ success: true, message: "Logout successfully" });
-};
-
 const editProfile = async (req, res) => {
   try {
-    const { firstName, lastName, contactNumber } = req.body;
+    const { firstName, lastName, contactNumber, oldPassword, newPassword } =
+      req.body;
     const expertId = req.userId;
-    const updatedExpert = await Expert.update(
-      { firstName, lastName, contactNumber },
-      { where: { expertId } }
-    );
-    res
-      .status(200)
-      .json({ message: "Expert profile updated successfully", updatedExpert });
+
+    const expert = await Expert.findOne({ where: { expertId } });
+    if (!expert) {
+      return res.status(404).json({ message: "Expert not found" });
+    }
+
+    let updateData = { firstName, lastName, contactNumber };
+
+    if (oldPassword && newPassword) {
+      const isMatch = await bcrypt.compare(oldPassword, expert.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Old password is incorrect" });
+      }
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      updateData.password = hashedNewPassword;
+    }
+
+    const [updated] = await Expert.update(updateData, { where: { expertId } });
+
+    if (!updated) {
+      return res.status(400).json({ message: "Expert profile not updated" });
+    }
+
+    res.status(200).json({ message: "Expert profile updated successfully" });
   } catch (error) {
     res.status(400).json({ message: "Expert profile not updated", error });
   }
@@ -103,12 +125,17 @@ const getJobs = async (req, res) => {
 
 const applyJob = async (req, res) => {
   try {
-    const { jobId, resume } = req.body;
+    const bufferdResume = req.file ? req.file.buffer : null;
+    console.log(req.body);
+    const { jobId, firstName, lastName, email } = req.body;
     const expertId = req.userId;
     const jobApplication = await JobApplication.create({
       expertId,
       jobId,
-      resume,
+      resume: bufferdResume,
+      firstName,
+      lastName,
+      email,
     });
     res
       .status(200)
@@ -212,7 +239,6 @@ module.exports = {
   editProfile,
   getJobs,
   applyJob,
-  logout,
   verifyEmail,
   forgotPassword,
   resetPassword,
