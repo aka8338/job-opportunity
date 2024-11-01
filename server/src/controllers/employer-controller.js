@@ -5,7 +5,6 @@ const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const Employer = require("../models/employer-model");
 const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
-const Expert = require("../models/expert-model");
 const { sendVerificationEmail } = require("../nodemailer/email");
 
 const signup = async (req, res) => {
@@ -36,7 +35,8 @@ const signup = async (req, res) => {
     await sendVerificationEmail(email, verificationToken);
     res.status(201).json({
       message: "Company added successfully",
-      company: companyWithoutPassword,
+      data: companyWithoutPassword,
+      isEmployer: true,
     });
   } catch (error) {
     console.log(error);
@@ -61,30 +61,58 @@ const login = async (req, res) => {
         return res.status(400).json({ message: "Invalid credentials" });
       }
     }
+
+    // Exclude password from the returned company object
+    const { password: _, ...companyWithoutPassword } = company.toJSON();
     generateTokenSetCookie(res, company.companyId);
-    res
-      .status(200)
-      .json({ message: "Company logged in successfully", company });
+    res.status(200).json({
+      message: "Company logged in successfully",
+      data: companyWithoutPassword,
+      isEmployer: true,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
 
-const logout = (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ success: true, message: "Logout successfully" });
-};
-
 const editProfile = async (req, res) => {
   try {
-    const { companyName, contactNumber, companyDescription } = req.body;
+    const {
+      companyName,
+      contactNumber,
+      companyDescription,
+      oldPassword,
+      newPassword,
+    } = req.body;
     const companyId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
 
-    // Update company profile using Sequelize
-    const updatedCompany = await Employer.update(
-      { companyName, contactNumber, companyDescription },
-      { where: { companyId } }
+    // Find the company by ID
+    const company = await Employer.findOne({ where: { companyId } });
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    // Check if old password matches
+    const isPasswordValid = await bycrypt.compare(
+      oldPassword,
+      company.password
     );
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid old password" });
+    }
+
+    // Hash the new password if provided
+    let updatedFields = { companyName, contactNumber, companyDescription };
+    if (newPassword) {
+      const hashedNewPassword = await bycrypt.hash(newPassword, 10);
+      updatedFields.password = hashedNewPassword;
+    }
+
+    // Update company profile using Sequelize
+    const updatedCompany = await Employer.update(updatedFields, {
+      where: { companyId },
+    });
 
     if (updatedCompany[0] === 0) {
       return res.status(400).json({ message: "Company profile not updated" });
@@ -99,7 +127,6 @@ const editProfile = async (req, res) => {
 const postJob = async (req, res) => {
   try {
     const {
-      companyId,
       jobTitle,
       jobDescription,
       jobLocation,
@@ -109,6 +136,8 @@ const postJob = async (req, res) => {
       jobExperience,
       jobLevel,
     } = req.body;
+
+    const companyId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
 
     // Add a new job posting using Sequelize
     const newJob = await JobPosting.create({
@@ -124,19 +153,6 @@ const postJob = async (req, res) => {
     });
 
     res.status(201).json({ message: "Job added successfully", newJob });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", error });
-  }
-};
-
-const getJobs = async (req, res) => {
-  try {
-    const { companyId } = req.body;
-
-    // Fetch all jobs for the company using Sequelize
-    const jobs = await JobPosting.findAll({ where: { companyId } });
-
-    res.status(200).json({ message: "Jobs retrieved successfully", jobs });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
   }
@@ -200,17 +216,16 @@ const deleteJob = async (req, res) => {
 
 const getApplicants = async (req, res) => {
   try {
-    const { jobId } = req.body;
-
+    const jobId = Number(req.params.jobId);
     // Fetch all applicants for a specific job posting using Sequelize
     const applicants = await JobApplication.findAll({
       where: { jobId },
-      include: [Expert], // Assuming Expert is the applicant model
     });
 
-    res
-      .status(200)
-      .json({ message: "Applicants retrieved successfully", applicants });
+    res.status(200).json({
+      message: "Applicants retrieved successfully",
+      applicants,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
   }
@@ -218,13 +233,12 @@ const getApplicants = async (req, res) => {
 
 const examineApplicant = async (req, res) => {
   try {
-    const { applicantId, status } = req.body;
-    const companyId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
-
+    const { applicantId, status, jobId } = req.body;
+    console.log(applicantId, status, jobId);
     // Update the applicant status using Sequelize
     const updatedApplicant = await JobApplication.update(
-      { status },
-      { where: { applicationId: applicantId, companyId } }
+      { applicationStatus: status },
+      { where: { applicationId: applicantId, jobId } }
     );
 
     if (updatedApplicant[0] === 0) {
@@ -346,11 +360,9 @@ module.exports = {
   login,
   editProfile,
   postJob,
-  getJobs,
   editJob,
   deleteJob,
   getApplicants,
-  logout,
   examineApplicant,
   verifyEmail,
   forgotPassword,
