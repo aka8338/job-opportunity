@@ -12,7 +12,7 @@ function ExpertSignUp() {
     email: "",
     password: "",
     confirmPassword: "",
-    phoneNumber: "",
+    contactNumber: "",
   });
 
   const { signup, error, isLoading } = AuthStore();
@@ -65,9 +65,9 @@ function ExpertSignUp() {
             <Input
               icon={PhoneCall}
               type="text"
-              name="phoneNumber"
+              name="contactNumber"
               placeholder="Phone Number"
-              value={formData.phoneNumber}
+              value={formData.contactNumber}
               onChange={handleInputChange}
             />
             <Input
