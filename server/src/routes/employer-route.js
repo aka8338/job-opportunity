@@ -4,11 +4,9 @@ const {
   login,
   editProfile,
   postJob,
-  getJobs,
   editJob,
   deleteJob,
   getApplicants,
-  logout,
   examineApplicant,
   verifyEmail,
   forgotPassword,
@@ -21,21 +19,17 @@ employerRouter.post("/signup", signup);
 
 employerRouter.post("/login", login);
 
-employerRouter.get("/logout", logout);
-
 employerRouter.patch("/editProfile", editProfile);
 
 employerRouter.post("/postJob", postJob);
-
-employerRouter.get("/getJobs", getJobs);
 
 employerRouter.patch("/editJob/:jobId", editJob);
 
 employerRouter.delete("/removeJob/:jobId", deleteJob);
 
-employerRouter.get("/applicants", getApplicants);
+employerRouter.get("/applicants/:jobId", getApplicants);
 
-employerRouter.patch("/applicant/:id", examineApplicant);
+employerRouter.patch("/applicant", examineApplicant);
 
 employerRouter.post("/verify", verifyEmail);
 
