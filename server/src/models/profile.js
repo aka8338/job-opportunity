@@ -13,7 +13,7 @@ const Profile = sequelize.define("Profile", {
   },
 
   profilePicture: {
-    type: Sequelize.STRING, // URL or path to the profile picture
+    type: Sequelize.BLOB("long"), // URL or path to the profile picture
     allowNull: true,
   },
 });
