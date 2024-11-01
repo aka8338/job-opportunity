@@ -34,30 +34,78 @@ const JobApplication = sequelize.define(
       },
     },
     applicationStatus: {
-      type: Sequelize.ENUM("applied", "shortlisted", "rejected"),
+      type: Sequelize.ENUM(
+        "interview scheduled",
+        "shortlisted",
+        "rejected",
+        "accepted"
+      ),
       defaultValue: "shortlisted",
     },
-    resume: {
+    firstName: {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: false,
       validate: {
-        isUrl: {
-          msg: "Resume must be a valid URL",
+        notNull: {
+          msg: "First Name is required",
+        },
+        isAlpha: {
+          msg: "First Name must only contain letters",
+        },
+      },
+    },
+    lastName: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Last Name is required",
+        },
+        isAlpha: {
+          msg: "Last Name must only contain letters",
+        },
+      },
+    },
+    email: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Email is required",
+        },
+        isEmail: {
+          msg: "Email must be a valid email address",
+        },
+      },
+    },
+    resume: {
+      type: Sequelize.BLOB("long"),
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Resume is required",
         },
       },
     },
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["jobId", "expertId"],
+      },
+    ],
   }
 );
 
 JobApplication.associate = (models) => {
-  JobApplication.belongsTo(models.Job, {
+  JobApplication.belongsTo(models.JobPosting, {
     foreignKey: "jobId",
     as: "job",
   });
   JobApplication.belongsTo(models.Expert, {
+    // Ensure the model name matches the actual model
     foreignKey: "expertId",
     as: "expert",
   });
