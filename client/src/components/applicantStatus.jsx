@@ -29,7 +29,7 @@ const JobDetails = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center">
+    <div className="p-6 bg-gray-100 h-full flex flex-col items-center">
       <div className="space-x-4 mb-6">
         <button
           onClick={() => handleClick("shortlisted")}
@@ -101,7 +101,7 @@ const JobDetails = () => {
                       onChange={(e) => setStatus(e.target.value.toLowerCase())}
                       className="px-4 py-2 bg-white border rounded m-2"
                     >
-                      <option value="" disabled selected>
+                      <option value="" disabled>
                         Select Action
                       </option>
                       {selectedCategory === "shortlisted" && (

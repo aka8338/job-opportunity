@@ -37,7 +37,7 @@ const AuthStore = create((set) => ({
   verifyEmail: async (verificationToken, path) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(path, { token: verificationToken });
+      const response = await axios.patch(path, { token: verificationToken });
       set({
         user: response.data.user,
         isAuthenticated: true,

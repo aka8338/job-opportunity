@@ -31,7 +31,7 @@ employerRouter.get("/applicants/:jobId", getApplicants);
 
 employerRouter.patch("/applicant", examineApplicant);
 
-employerRouter.post("/verify", verifyEmail);
+employerRouter.patch("/verify", verifyEmail);
 
 employerRouter.post("/forgot-password", forgotPassword);
 

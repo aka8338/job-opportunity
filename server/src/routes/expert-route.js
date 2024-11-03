@@ -23,7 +23,7 @@ expertRouter.get("/getJobs", getJobs);
 
 expertRouter.post("/applyJob", upload.single("resume"), applyJob);
 
-expertRouter.post("/verify", verifyEmail);
+expertRouter.patch("/verify", verifyEmail);
 
 expertRouter.post("/forgot-password", forgotPassword);
 
