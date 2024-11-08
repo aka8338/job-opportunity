@@ -32,6 +32,10 @@ const Expert = sequelize.define(
       type: Sequelize.STRING(255),
       allowNull: false,
     },
+    profilePicture: {
+    type: Sequelize.BLOB("long"), 
+    allowNull: true,
+  },
 
     loginTime: {
       type: Sequelize.DATE,

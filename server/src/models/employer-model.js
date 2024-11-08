@@ -32,6 +32,10 @@ const Employer = sequelize.define(
       type: Sequelize.STRING(255),
       allowNull: false,
     },
+    profilePicture: {
+    type: Sequelize.BLOB("long"), // URL or path to the profile picture
+    allowNull: true,
+  },
     loginTime: {
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW,

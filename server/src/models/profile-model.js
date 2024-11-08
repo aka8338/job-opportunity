@@ -11,10 +11,5 @@ const Profile = sequelize.define("Profile", {
     type: Sequelize.JSON, // Store certifications as a JSON array
     allowNull: true,
   },
-
-  profilePicture: {
-    type: Sequelize.BLOB("long"), // URL or path to the profile picture
-    allowNull: true,
-  },
 });
 module.exports = Profile;
