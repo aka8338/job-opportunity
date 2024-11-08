@@ -1,12 +1,13 @@
 import { Moon, Sun, MenuIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Buffer } from "buffer";
 import { Link } from "react-router-dom";
 import AuthStore from "../store/AuthStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState("light");
-  const { isAuthenticated } = AuthStore();
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const { isAuthenticated, user } = AuthStore();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -14,6 +15,7 @@ const Navbar = () => {
     } else {
       document.documentElement.classList.remove("dark");
     }
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -30,7 +32,7 @@ const Navbar = () => {
           </h1>
           <span className="text-sm ml-2">Primary</span>
         </div>
-
+        <div className="flex items-center space-x-4">
         {/* Hamburger Icon for Small Screens */}
         <button
           className="lg:hidden hover:text-gray-800 focus:outline-none"
@@ -46,21 +48,22 @@ const Navbar = () => {
           }`}
         >
           <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-8">
-            <Link to="/" className="hover:text-teal-500 font-semibold">
+            <Link to="/" className="hover:text-teal-500 font-semibold" onClick={()=> setIsOpen(!isOpen)}>
               Home
             </Link>
-            <Link to="/about" className="hover:text-teal-500">
+            <Link to="/about" className="hover:text-teal-500" onClick={()=> setIsOpen(!isOpen)}>
               About
             </Link>
-            <Link to="/jobs" className="hover:text-teal-500">
+            <Link to="/jobs" className="hover:text-teal-500" onClick={()=> setIsOpen(!isOpen)}>
               Jobs
             </Link>
 
-            <Link to="/contact" className="hover:text-teal-500">
+            <Link to="/contact" className="hover:text-teal-500" onClick={()=> setIsOpen(!isOpen)}>
               Contact
             </Link>
           </div>
-
+          
+        </div>
           {/* Dark Mode Toggle (Icon placeholder) */}
           <button className="hover:text-gray-800" onClick={toggleTheme}>
             {theme == "dark" ? <Sun /> : <Moon />}
@@ -70,11 +73,11 @@ const Navbar = () => {
           <div className="flex items-center">
             {isAuthenticated ? (
               <Link to="/profile">
-                <img
-                  src={""}
+                {user?.profilePicture?<img
+                  src={`data:image/jpeg;base64,${Buffer.from(user?.profilePicture).toString('base64')}`}
                   alt="profile"
-                  className="w-10 h-10 rounded-full border-2 border-amber-300"
-                />
+                  className="w-10 h-10 rounded-full object-cover border-2 border-amber-300"
+                />:<img src="https://via.placeholder.com/150" alt="profile" className="w-10 h-10 rounded-full border-2 border-amber-300" />}
               </Link>
             ) : (
               <button className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
