@@ -77,6 +77,7 @@ const login = async (req, res) => {
 
 const editProfile = async (req, res) => {
   try {
+    const bufferdProfilePicture = req.file ? req.file.buffer : null;
     const {
       companyName,
       contactNumber,
@@ -103,7 +104,7 @@ const editProfile = async (req, res) => {
     }
 
     // Hash the new password if provided
-    let updatedFields = { companyName, contactNumber, companyDescription };
+    let updatedFields = { companyName, contactNumber, companyDescription, profilePicture: bufferdProfilePicture };
     if (newPassword) {
       const hashedNewPassword = await bycrypt.hash(newPassword, 10);
       updatedFields.password = hashedNewPassword;

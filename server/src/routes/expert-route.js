@@ -17,7 +17,7 @@ expertRouter.post("/signup", signup);
 
 expertRouter.post("/login", login);
 
-expertRouter.patch("/editProfile", editProfile);
+expertRouter.patch("/editProfile",upload.single("picture"), editProfile);
 
 expertRouter.get("/getJobs", getJobs);
 

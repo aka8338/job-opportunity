@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../utils/multer");
 const {
   signup,
   login,
@@ -19,7 +20,7 @@ employerRouter.post("/signup", signup);
 
 employerRouter.post("/login", login);
 
-employerRouter.patch("/editProfile", editProfile);
+employerRouter.patch("/editProfile",upload.single("picture"), editProfile);
 
 employerRouter.post("/postJob", postJob);
 

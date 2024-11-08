@@ -75,6 +75,7 @@ const login = async (req, res) => {
 
 const editProfile = async (req, res) => {
   try {
+    const bufferdProfilePicture = req.file ? req.file.buffer : null;
     const { firstName, lastName, contactNumber, oldPassword, newPassword } =
       req.body;
     const expertId = req.userId;
@@ -84,7 +85,7 @@ const editProfile = async (req, res) => {
       return res.status(404).json({ message: "Expert not found" });
     }
 
-    let updateData = { firstName, lastName, contactNumber };
+    let updateData = { firstName, lastName, contactNumber, profilePicture: bufferdProfilePicture };
 
     if (oldPassword && newPassword) {
       const isMatch = await bcrypt.compare(oldPassword, expert.password);
@@ -126,7 +127,6 @@ const getJobs = async (req, res) => {
 const applyJob = async (req, res) => {
   try {
     const bufferdResume = req.file ? req.file.buffer : null;
-    console.log(req.body);
     const { jobId, firstName, lastName, email } = req.body;
     const expertId = req.userId;
     const jobApplication = await JobApplication.create({
