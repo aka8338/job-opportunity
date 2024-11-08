@@ -93,21 +93,16 @@ const editProfile = async (req, res) => {
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
     }
-
-    // Check if old password matches
-    const isPasswordValid = await bycrypt.compare(
-      oldPassword,
-      company.password
-    );
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid old password" });
-    }
-
-    // Hash the new password if provided
     let updatedFields = { companyName, contactNumber, companyDescription, profilePicture: bufferdProfilePicture };
-    if (newPassword) {
-      const hashedNewPassword = await bycrypt.hash(newPassword, 10);
-      updatedFields.password = hashedNewPassword;
+
+    if (oldPassword && newPassword) {
+      const isPasswordValid = await bycrypt.compare(oldPassword, company.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid old password" });
+      }
+
+      const hashedPassword = await bycrypt.hash(newPassword, 10);
+      updatedFields.password = hashedPassword;
     }
 
     // Update company profile using Sequelize

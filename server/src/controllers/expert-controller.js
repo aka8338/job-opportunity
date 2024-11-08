@@ -76,6 +76,7 @@ const login = async (req, res) => {
 const editProfile = async (req, res) => {
   try {
     const bufferdProfilePicture = req.file ? req.file.buffer : null;
+    console.log(req.file);
     const { firstName, lastName, contactNumber, oldPassword, newPassword } =
       req.body;
     const expertId = req.userId;
