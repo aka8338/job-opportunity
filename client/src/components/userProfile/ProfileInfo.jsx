@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Buffer } from "buffer";
 import AuthStore from "../../store/AuthStore";
 
 export default function ProfileInfo() {
@@ -17,11 +18,14 @@ export default function ProfileInfo() {
   return (
     <div className="text-neutral-100 p-6 rounded shadow-lg w-full max-w-2xl bg-gray-600">
       <div className="flex flex-col items-center mb-6">
-        <img
-          src={""}
-          alt="Profile"
-          className="w-32 h-32 rounded-full border-4 border-blue-500 mb-4"
-        />
+        
+      {user?.profilePicture ?<img
+        src={`data:image/jpeg;base64,${Buffer.from(user?.profilePicture).toString('base64')}`}
+        alt="Profile"
+        className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 mb-4"
+      />:
+      <img src="../assets/images/istockphoto-1337144146-1024x1024.jpg" alt="Profile" className="w-32 h-32 rounded-full border-4 border-blue-500 mb-4" />
+      }
       </div>
 
       <div>
