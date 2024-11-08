@@ -194,9 +194,9 @@ const AuthStore = create((set) => ({
 
     try {
       if (isEmployer) {
-        await axios.patch("/employer/editProfile", { ...profileData });
+        await axios.patch("/employer/editProfile", { ...profileData }, { headers: { "Content-Type": "multipart/form-data" }});
       } else {
-        await axios.patch("/expert/editProfile", { ...profileData });
+        await axios.patch("/expert/editProfile", { ...profileData }, { headers: { "Content-Type": "multipart/form-data" }});
       }
     } catch (error) {
       set({
