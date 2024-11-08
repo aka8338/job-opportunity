@@ -5,7 +5,7 @@ const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
 const Expert = require("../models/expert-model");
 const Employer = require("../models/employer-model");
-const Profile = require("../models/profile");
+const Profile = require("../models/profile-model");
 
 const {
   sendVerificationEmail,
