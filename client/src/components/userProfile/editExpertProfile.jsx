@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Buffer } from "buffer";
 import AuthStore from "../../store/AuthStore";
+import { ImageUp } from "lucide-react";
+
 
 export default function EditExpertProfile() {
   const [subProfile, setSubProfile] = useState({
@@ -9,6 +12,7 @@ export default function EditExpertProfile() {
     oldPassword: "",
     newPassword: "",
     contactNumber: "",
+    picture: null,
   });
 
   const navigate = useNavigate();
@@ -16,13 +20,14 @@ export default function EditExpertProfile() {
   const { editProfile, user } = AuthStore();
 
   useEffect(() => {
-    const { firstName, lastName, contactNumber } = user;
+    const { firstName, lastName, contactNumber, profilePicture } = user;
     setSubProfile({
       firstName,
       lastName,
       contactNumber,
       oldPassword: "",
       newPassword: "",
+      picture:profilePicture,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -35,15 +40,52 @@ export default function EditExpertProfile() {
     });
   };
 
+  const handleFileChange = (e) => {
+    setSubProfile({
+      ...subProfile,
+      picture: e.target.files[0],
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     await editProfile(subProfile);
     navigate("/profile");
   };
 
   return (
     <div>
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="picture"
+            className="mb-2 text-sm font-medium text-gray-200"
+          >
+            Profile Picture:
+          </label>
+          
+          {subProfile.picture ? (
+            <img
+              src={subProfile.picture instanceof File ? URL.createObjectURL(subProfile.picture) : `data:image/jpeg;base64,${Buffer.from(subProfile.picture).toString('base64')}`}
+              alt="Profile Preview"
+              className="mt-4 w-32 h-32 rounded-full object-cover"
+            />
+          ) : (
+            <div className="mt-4 w-32 h-32 rounded-full bg-black"></div>
+          )}
+          <input
+            type="file"
+            id="picture"
+            name="picture"
+            className="hidden"
+            onChange={handleFileChange}
+            accept="image/*"
+          />
+          <label htmlFor="picture" className="cursor-pointer mt-2">
+            <ImageUp size={16} />
+          </label>
+        </div>
         <div className="flex flex-col">
           <label
             htmlFor="firstName"
@@ -92,7 +134,6 @@ export default function EditExpertProfile() {
             className="p-2 rounded bg-gray-700 text-gray-200"
             value={subProfile.oldPassword}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="flex flex-col">
@@ -109,7 +150,6 @@ export default function EditExpertProfile() {
             className="p-2 rounded bg-gray-700 text-gray-200"
             value={subProfile.newPassword}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="flex flex-col">
@@ -132,7 +172,6 @@ export default function EditExpertProfile() {
         <button
           type="submit"
           className="px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
-          onClick={handleSubmit}
         >
           Save
         </button>

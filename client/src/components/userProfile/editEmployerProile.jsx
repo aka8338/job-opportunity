@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Buffer } from "buffer";
+import { ImageUp } from "lucide-react";
 import AuthStore from "../../store/AuthStore";
 
 export default function EditEmployerProile() {
@@ -9,6 +11,7 @@ export default function EditEmployerProile() {
     contactNumber: "",
     oldPassword: "",
     newPassword: "",
+    picture: null,
   });
 
   const navigate = useNavigate();
@@ -16,13 +19,14 @@ export default function EditEmployerProile() {
   const { editProfile, user } = AuthStore();
 
   useEffect(() => {
-    const { companyName, companyDescription, contactNumber } = user;
+    const { companyName, companyDescription, contactNumber, profilePicture } = user;
     setSubProfile({
       companyName,
       companyDescription,
       contactNumber,
       oldPassword: "",
       newPassword: "",
+      picture: profilePicture,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -35,6 +39,13 @@ export default function EditEmployerProile() {
     });
   };
 
+  const handleFileChange = (e) => {
+    setSubProfile({
+      ...subProfile,
+      picture: e.target.files[0],
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await editProfile(subProfile);
@@ -44,6 +55,35 @@ export default function EditEmployerProile() {
   return (
     <div>
       <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="profilePicture"
+            className="mb-2 text-sm font-medium text-gray-200"
+          >
+            Profile Picture:
+          </label>
+          
+          {subProfile.picture ? (
+            <img
+              src={subProfile.picture instanceof File ? URL.createObjectURL(subProfile.picture) : `data:image/jpeg;base64,${Buffer.from(subProfile.picture).toString('base64')}`}
+              alt="Profile Preview"
+              className="mt-4 w-32 h-32 rounded-full object-cover"
+            />
+          ) : (
+            <div className="mt-4 w-32 h-32 rounded-full bg-black"></div>
+          )}
+          <input
+            type="file"
+            id="picture"
+            name="picture"
+            className="hidden"
+            onChange={handleFileChange}
+            accept="image/*"
+          />
+          <label htmlFor="picture" className="cursor-pointer mt-2">
+            <ImageUp size={16} />
+          </label>
+        </div>
         <div className="flex flex-col">
           <label
             htmlFor="companyName"
