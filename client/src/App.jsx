@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar.jsx";
-
+import Footer from "./components/Footer.jsx";
 import ApplicantStatus from "./components/applicantStatus.jsx";
 import PostJob from "./components/postJob.jsx";
 import AboutUs from "./pages/About.jsx";
@@ -48,6 +48,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </div>
+        <Footer />
       </div>
     </div>
   );
