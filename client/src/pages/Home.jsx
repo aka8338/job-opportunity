@@ -78,8 +78,8 @@ const LandingPage = () => {
         <p className="text-xl text-gray-600">Find career opportunities in Ethiopia</p>
       </div>
 
-      <div className="flex flex-col items-center mt-12">
-        <p className="text-lg font-semibold mb-4 text-gray-700">Sign Up As</p>
+      <div className="flex flex-col items-center my-12 rounded w-1/2 shadow-md mx-auto bg-slate-200">
+        <p className="text-lg font-semibold my-6 text-gray-700">Sign Up As</p>
 
         <div className="flex space-x-4">
           <Link
